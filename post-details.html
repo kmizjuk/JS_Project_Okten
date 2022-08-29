@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post details</title>
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h2 {
+    color: rgba(33, 135, 179, 0.55);
+           }
+        .divStyle {
+            width: 800px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .pStyle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 400px;
+            border: #56709c solid ;
+            border-radius: 10px;
+            background: #bae3db;
+            font-family: Helvetica;
+            padding: 10px;
+        }
+        .buttonStyle {
+            width: 300px;
+            height: 50px;
+            background: #d8e4e5;
+            border-radius: 5px;
+        }
+        .buttonStyle:hover{
+            cursor: pointer;
+            background: #208d7c;
+        }
+        .wrapStyle{
+            width: 1400px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        .commentDivStyle {
+            width: 330px;
+            height: 400px;
+            border: #7362e0 solid;
+            border-radius: 10px;
+            margin: 5px;
+            background: #e3e1fc;
+        }
+        .p2Style {
+            padding: 5px;
+            font-family: Helvetica;
+        }
+    </style>
+</head>
+<body>
+<h2>Post details</h2>
+<script>
+    let url = new URL(location.href);
+    let id = url.searchParams.get('id')
+
+    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
+        .then(response => response.json())
+        .then(postDetails => {
+                let post = document.createElement('div')
+            post.classList.add('divStyle')
+                for (const postKey in postDetails) {
+                    let p = document.createElement('p')
+                    p.innerText = `${postKey} - ${postDetails[postKey]}`
+                    p.classList.add('pStyle')
+                    post.append(p)
+                }
+                document.body.append(post)
+
+                let commentsButton = document.createElement('button')
+                commentsButton.innerText = "Post comments"
+            commentsButton.classList.add('buttonStyle')
+                commentsButton.onclick = function () {
+                    let wrap = document.createElement('div')
+                    wrap.classList.add("wrapStyle")
+                    document.body.append(wrap)
+                    fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
+                        .then(response => response.json())
+                        .then(comments => {
+                                for (const comment of comments) {
+                                    let commentDiv = document.createElement('div')
+                                    commentDiv.classList.add("commentDivStyle")
+                                    document.body.append(commentDiv)
+                                    for (const commentElem in comment) {
+                                        let p = document.createElement('p')
+                                        p.classList.add("p2Style")
+                                        p.innerText = `${commentElem} - ${comment[commentElem]}`
+                                        commentDiv.append(p)
+                                        wrap.append(commentDiv)
+
+                                    }
+                                }
+                            }
+                        )
+                }
+                document.body.append(commentsButton)
+
+            }
+        )
+
+</script>
+</body>
+</html>

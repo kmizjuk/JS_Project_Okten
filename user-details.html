@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User details</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #208d7c;
+
+}
+.divWithInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 30px;
+    font-size: 18px;
+    border: solid #71e2d1;
+    margin-top: 5px;
+    font-style: italic;
+}
+.button {
+    width: 90%;
+    height: 30px;
+    margin-top: 10px;
+    background: #88d8db;
+    border: solid #71e2d1;
+    border-radius: 10px;
+
+}
+        .button:hover {
+            background: rgba(33, 179, 101, 0.55);
+            cursor: pointer;
+        }
+.divWithTitle {
+    width: 1200px;
+    flex-wrap: wrap;
+  display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.p {
+    width: 19%;
+    height: 150px;
+    margin: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: bisque;
+    font-weight: bold ;
+}
+.titleButton {
+    margin-top: 10px;
+    height: 30px;
+    background: #bae3db;
+}
+.titleButton:hover{
+    background: cadetblue;
+    cursor: pointer;
+}
+    </style>
+</head>
+<body>
+ <h2>User details</h2>
+
+<script>
+    let url = new URL(location.href);
+    let id = url.searchParams.get('id')
+
+    let users = fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+        .then(response => response.json())
+        .then(infos => {
+            function recursion(item) {
+                for (const infoElement in item) {
+                    if (typeof item[infoElement] !== 'object') {
+                        let div = document.createElement('div')
+                        div.innerText = `${infoElement} - ${item[infoElement]}`
+                        div.classList.add('divWithInfo')
+                        document.body.append(div)
+                    } else {
+                        recursion(item[infoElement])
+                    }
+
+                }
+
+            }
+
+            recursion(infos)
+
+            let button = document.createElement('button')
+            button.innerText = "Post of current user"
+            button.classList.add('button')
+            button.onclick = function () {
+                fetch(`https://jsonplaceholder.typicode.com/users/${id}/posts`)
+                    .then(response => response.json())
+                    .then(posts => {
+                        let divTitle = document.createElement('div')
+                        divTitle.classList.add('divWithTitle')
+                        for (const post of posts) {
+                            let p = document.createElement('p')
+                            p.innerText = post.title
+                            p.classList.add('p')
+                            divTitle.append(p)
+                            let button = document.createElement('button')
+                            button.innerText = 'Post details'
+                            button.classList.add('titleButton')
+                            p.append(button)
+                            button.onclick = function () {
+                                location.href = `post-details.html?id=${post.id}`
+                            }
+                        }
+                        document.body.append(divTitle)
+                    })
+            }
+            document.body.append(button)
+        })
+</script>
+</body>
+</html>
